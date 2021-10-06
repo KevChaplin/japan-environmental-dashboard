@@ -3,8 +3,6 @@ const h= 700
 
 const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/japan/jp-prefectures.json"
 
-let prefectureData
-
 const svgMap = d3.select("body")
                     .append("svg")
                     .attr("id", "map-canvas")
@@ -37,6 +35,8 @@ d3.json(japanMapDataUrl).then(
       console.log(error)
     } else {
       prefectureData = topojson.feature(data, data.objects.JPN_adm1).features
+      console.log(prefectureData)
+      getTemperatureData()
       drawMap()
     }
   }

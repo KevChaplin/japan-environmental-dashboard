@@ -35,7 +35,6 @@ d3.json(japanMapDataUrl).then(
       console.log(error)
     } else {
       prefectureData = topojson.feature(data, data.objects.JPN_adm1).features
-      console.log(prefectureData)
       getTemperatureData()
       drawMap()
     }

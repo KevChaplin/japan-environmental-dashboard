@@ -13,15 +13,12 @@ const getTemperatureData = () => {
         console.log(error)
       } else {
         let dataAll =data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
-        dataAll.forEach(item => {
-          //possible to use filter on data???
-          temperatureData.push(
-            {
-            year: item.VALUE["@time"].substring(0,4),
-            prefecture: prefectures[parseInt(item.VALUE["@regionCode"].substring(0,2)) -1],
-            value: item.VALUE["$"]
-            }
-          )
+        temperatureData = dataAll.map(item => {
+          return {
+                year: item.VALUE["@time"].substring(0,4),
+                prefecture: prefectures[parseInt(item.VALUE["@regionCode"].substring(0,2)) -1],
+                value: item.VALUE["$"]
+          }
         })
         console.log(temperatureData)
         console.log(prefectures)

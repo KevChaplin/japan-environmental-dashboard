@@ -1,5 +1,6 @@
 const w = 1000
-const h= 700
+const h = 700
+const legendAxisLength = w/3
 
 const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/japan/jp-prefectures.json"
 
@@ -35,9 +36,19 @@ const drawMap = () => {
   let year = 1975
 
   // Colors representing temperature variance
-  const colorScale = d3.scaleQuantile()
+  const dataScale = d3.scaleQuantile()
                   .domain(d3.extent(temperatureData, d => d.value))
                   .range(colors)
+
+  // Legend scale
+  const legendScale = d3.scaleLinear()
+                        .domain(d3.extent(temperatureData, d => d.value))
+                        .range([0, legendAxisLength])
+
+  // Legend
+  const legendAxis = d3.axisBottom(legendScale)
+                        .tickValues( dataScale.quantiles().concat(legendScale.domain()) )
+                        .tickFormat(d3.format(".1f"))
 
   // Creat map using d3.geoPath on converted topojson data
   svgMap.selectAll("path")
@@ -53,8 +64,23 @@ const drawMap = () => {
               return ( (item.year === year) && (item.prefecture === id) )
             })
             let avTemperature = pref.value
-            return colorScale(avTemperature)
+            return dataScale(avTemperature)
           })
+
+    // legend-axis
+    svgMap.append("g")
+        .attr("id", "legend")
+        .attr("transform", `translate(${0.6 * w}, ${0.9 * h})`)
+        .call(legendAxis)
+        .selectAll("rect")
+          .data(colors)
+          .enter()
+          .append("rect")
+            .attr("width",  legendAxisLength / 9)
+            .attr("height", 20)
+            .attr("fill", d => d)
+            .style("stroke", "none")
+            .attr("transform", (d, i) => `translate(${legendAxisLength * i / 9}, -20)`)
 }
 
 // Import data - map data is converted from topojson format; temperature data imported after map data - see fetchData.js
@@ -80,7 +106,7 @@ d3.json(japanMapDataUrl).then(
                     value: parseFloat(item.VALUE["$"])
               }
             })
-            // Once map data and climate data obtained, can draw map
+            // Once map data and climate data obtained, draw map
             drawMap()
           }
         }

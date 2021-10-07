@@ -15,3 +15,7 @@ body {
   background-color: pink;
   width: 1000px;
 }
+
+.tick {
+  stroke: black;
+}

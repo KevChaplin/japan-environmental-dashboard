@@ -24,7 +24,12 @@
 </body>
 
 <script src="data/prefectures.js"></script>
-<script src="js/fetchData.js"></script>
 <script src="js/choropleth.js"></script>
+<script type="module">
+  import {interpolateYlGn} from "https://cdn.skypack.dev/d3-scale-chromatic@3";
+  const yellow = interpolateYlGn(0); // "rgb(255, 255, 229)"
+  const yellowGreen = interpolateYlGn(0.5); // "rgb(120, 197, 120)"
+  const green = interpolateYlGn(1); // "rgb(0, 69, 41)"
+</script>
 
 </html>

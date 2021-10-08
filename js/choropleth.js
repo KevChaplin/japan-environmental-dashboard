@@ -3,13 +3,23 @@ const h = 700
 const legendAxisLength = w/3
 
 const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/japan/jp-prefectures.json"
-
 const dataBaseUrl = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
 
 let temperatureData = []
 // Data: Average Air Temperature / Year / Prefecture
 let indicatorId = "0102010000000010010"
 let dataUrl = `${dataBaseUrl}&IndicatorCode=${indicatorId}`
+
+// Control year of data displayed
+var currentYear = 1975
+var yearRange
+
+// Increment current (year) -- test prior to animation
+function increment() {
+  currentYear ++
+  console.log(currentYear)
+  // updateMap()
+}
 
 
 // Colors for representing temperature differential (z-axis). Array of colors from d3-scale-chromatic. Color scale reversed to match data.
@@ -33,7 +43,8 @@ const geoGenerator = d3.geoPath()
                     .projection(projection)
 
 const drawMap = () => {
-  let year = 1975
+
+  d3.select("#year").text(current)
 
   // Colors representing temperature variance
   const dataScale = d3.scaleQuantile()
@@ -61,7 +72,7 @@ const drawMap = () => {
           .attr("fill", prefDataItem => {
             let id = prefDataItem.properties.NAME_1
             let pref = temperatureData.find(item => {
-              return ( (item.year === year) && (item.prefecture === id) )
+              return ( (item.year === currentYear) && (item.prefecture === id) )
             })
             let avTemperature = pref.value
             return dataScale(avTemperature)
@@ -81,6 +92,23 @@ const drawMap = () => {
             .attr("fill", d => d)
             .style("stroke", "none")
             .attr("transform", (d, i) => `translate(${legendAxisLength * i / 9}, -20)`)
+
+
+
+    // Update map on change of date value
+    const updateMap = () => {
+      d3.selectAll(".prefecture")
+        .transition()
+        .duration(500)
+        .attr("fill", prefDataItem => {
+          let id = prefDataItem.properties.NAME_1
+          let pref = temperatureData.find(item => {
+            return ( (item.year === currentYear) && (item.prefecture === id) )
+          })
+          let avTemperature = pref.value
+          return dataScale(avTemperature)
+      })
+    }
 }
 
 // Import data - map data is converted from topojson format; temperature data imported after map data - see fetchData.js
@@ -106,6 +134,9 @@ d3.json(japanMapDataUrl).then(
                     value: parseFloat(item.VALUE["$"])
               }
             })
+            // set dateRange to reange of dates of data, and set current displayed data to latest date's values
+            dateRange = d3.extent(temperatureData, d => d.year)
+            current = dateRange[0]
             // Once map data and climate data obtained, draw map
             drawMap()
           }

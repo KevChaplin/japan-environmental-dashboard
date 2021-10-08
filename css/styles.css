@@ -16,6 +16,10 @@ body {
   width: 1000px;
 }
 
+#year {
+  display: inline-block;
+}
+
 .tick {
   stroke: black;
 }

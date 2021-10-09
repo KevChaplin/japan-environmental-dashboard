@@ -26,6 +26,7 @@
 - Kanban: trello.com
 - Japan Statistics: Statistics Dashboard (Jpn Gov) https://dashboard.e-stat.go.jp/
 - Japan Topojson data: https://github.com/deldersveld/topojson
+- d3-simple-slider: https://github.com/johnwalley/d3-simple-slider
 
 ## Other Notes
 - Error in Topojson data - Nagasaki prefecture's name listed as "Naosaki" - issue raised, error corrected within application.

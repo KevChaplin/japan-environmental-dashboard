@@ -6,7 +6,6 @@ const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/
 const dataBaseUrl = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
 
 let dataScale
-
 let temperatureData = []
 
 // Construct url for data retrieval from API
@@ -14,9 +13,25 @@ let temperatureData = []
 let indicatorId = "0102010000000010010"
 let dataUrl = `${dataBaseUrl}&IndicatorCode=${indicatorId}`
 
-// Year of data displayed
+// Year of data displayed, values are initial and will be overwritten once fetch coplete
 var currentYear = 1975
-var yearRange
+var yearRange = [1975,2019]
+// For animation
+let playing = false
+
+// Slider for year
+var slider = d3.sliderHorizontal()
+                .value([yearRange[1]])
+                .min(yearRange[0])
+                .max(yearRange[1])
+                .step(1)
+                .width(300)
+                .displayValue(false)
+                .tickFormat(d3.format("d"))
+                .on('onchange', (val) => {
+                  currentYear = val
+                  updateMap()
+                })
 
 // Update map and text based on currentYear value
 const updateMap = () => {
@@ -35,6 +50,29 @@ const updateMap = () => {
       let avTemperature = pref.value
       return dataScale(avTemperature)
   })
+}
+
+// Animate map data by iterating through years
+const animateMap = () => {
+  var timer
+  d3.select("#play-pause")
+    .on("click", function() {
+      if(playing == false) {
+        timer = setInterval( function() {
+          if(currentYear < yearRange[1]) { currentYear ++}
+          else {currentYear = yearRange[0]}
+          slider.value([currentYear])
+          // d3.select("#slider").value([currentYear])
+          updateMap()
+        }, 500)
+        d3.select(this).html("stop")
+        playing = true
+      } else {
+        clearInterval(timer)
+        d3.select(this).html("play")
+        playing = false
+      }
+    })
 }
 
 // Colors for representing temperature differential (z-axis). Array of colors from d3-scale-chromatic. Color scale reversed to match data.
@@ -83,39 +121,25 @@ const drawMap = () => {
                         .tickValues( dataScale.quantiles().concat(legendScale.domain()) )
                         .tickFormat(d3.format(".1f"))
 
-  // Slider for year
-  var slider = d3.sliderHorizontal()
-                  .value([yearRange[1]])
-                  .min(yearRange[0])
-                  .max(yearRange[1])
-                  .step(1)
-                  .width(300)
-                  .displayValue(false)
-                  .tickFormat(d3.format("d"))
-                  .on('onchange', (val) => {
-                    currentYear = val
-                    updateMap()
-                  })
-
   // Create map using d3.geoPath on converted topojson data
   svgMap.selectAll("path")
-          .data(prefectureData)
-          .enter()
-          .append("path")
-          .attr("d", geoGenerator)
-          .attr("class", "prefecture")
-          // Prefecture name used to match and obtain temperature data.
-          .attr("fill", prefDataItem => {
-            let id = prefDataItem.properties.NAME_1
-            let pref = temperatureData.find(item => {
-              return ( (item.year === currentYear) && (item.prefecture === id) )
-            })
-            let avTemperature = pref.value
-            return dataScale(avTemperature)
+        .data(prefectureData)
+        .enter()
+        .append("path")
+        .attr("d", geoGenerator)
+        .attr("class", "prefecture")
+        // Prefecture name used to match and obtain temperature data.
+        .attr("fill", prefDataItem => {
+          let id = prefDataItem.properties.NAME_1
+          let pref = temperatureData.find(item => {
+            return ( (item.year === currentYear) && (item.prefecture === id) )
           })
+          let avTemperature = pref.value
+          return dataScale(avTemperature)
+        })
 
-    // Add legend-axis
-    svgMap.append("g")
+  // Add legend-axis
+  svgMap.append("g")
         .attr("id", "legend")
         .attr("transform", `translate(${0.6 * w}, ${0.9 * h})`)
         .call(legendAxis)
@@ -129,13 +153,13 @@ const drawMap = () => {
             .style("stroke", "none")
             .attr("transform", (d, i) => `translate(${legendAxisLength * i / 9}, -20)`)
 
-    // Add slider for year
-    svgMap.append('svg')
-          .attr('width', 500)
-          .attr('height', 100)
-          .append('g')
-          .attr('transform', 'translate(30,30)')
-          .call(slider)
+  // Add slider for year
+  svgMap.append('svg')
+        .attr('width', 500)
+        .attr('height', 100)
+        .append('g')
+        .attr('transform', 'translate(30,30)')
+        .call(slider)
 
 }
 
@@ -167,6 +191,7 @@ d3.json(japanMapDataUrl).then(
             current = yearRange[1]
             // Once map data and climate data obtained, draw map
             drawMap()
+            animateMap()
           }
         }
       )

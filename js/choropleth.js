@@ -1,6 +1,6 @@
 const w = 1000
 const h = 600
-const legendAxisLength = w/3
+const legendAxisHeight = h/3
 
 var dataUrl
 const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/japan/jp-prefectures.json"
@@ -39,6 +39,7 @@ const changeData = () => {
   let indicatorIndex = document.getElementById("select-data").selectedIndex
   indicatorId = indicatorIdArr[indicatorIndex]
   addClimateData()
+  updateMap()
 }
 
 // Slider for year
@@ -47,7 +48,7 @@ var slider = d3.sliderHorizontal()
                 .min(yearRange[0])
                 .max(yearRange[1])
                 .step(1)
-                .width(300)
+                .width(w / 3)
                 .displayValue(false)
                 .tickFormat(d3.format("d"))
                 .on('onchange', (val) => {
@@ -137,12 +138,11 @@ const drawMap = () => {
   // Legend scale
   const legendScale = d3.scaleLinear()
                         .domain(d3.extent(climateData, d => d.value))
-                        .range([0, legendAxisLength])
+                        .range([legendAxisHeight, 0])
 
   // Legend
-  const legendAxis = d3.axisBottom(legendScale)
+  const legendAxis = d3.axisRight(legendScale)
                         .tickValues( dataScale.quantiles().concat(legendScale.domain()) )
-                        // .tickFormat(d3.format(".1f"))
                         .tickFormat(indicatorId === indicatorIdArr[3] ? d3.format(".0f") : d3.format(".1f"))
 
   // Create map using d3.geoPath on converted topojson data
@@ -165,28 +165,25 @@ const drawMap = () => {
   // Add legend-axis
   svgMap.append("g")
         .attr("id", "legend")
-        .attr("transform", `translate(${0.6 * w}, ${0.9 * h})`)
+        .attr("transform", `translate(${0.9 * w}, ${0.1 * h})`)
         .call(legendAxis)
         .selectAll("rect")
           .data(colors)
           .enter()
           .append("rect")
-            .attr("width",  legendAxisLength / 9)
-            .attr("height", 20)
+            .attr("width",  20)
+            .attr("height", legendAxisHeight / 9)
             .attr("fill", d => d)
             .style("stroke", "none")
-            .attr("transform", (d, i) => `translate(${legendAxisLength * i / 9}, -20)`)
+            .attr("transform", (d, i) => `translate(-20, ${legendAxisHeight - (legendAxisHeight * (i + 1) / 9)})`)
 
   // Remove old slider when updating to new data
   d3.select("#slider").remove()
 
   // Add slider for year
-  svgMap.append('svg')
+  svgMap.append('g')
         .attr("id", "slider")
-        .attr('width', 500)
-        .attr('height', 100)
-        .append('g')
-        .attr('transform', 'translate(30,30)')
+        .attr('transform', () => `translate(${(2 * w / 3) - 40}, ${h - 50})`)
         .call(slider)
 }
 

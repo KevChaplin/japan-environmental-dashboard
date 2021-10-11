@@ -4,13 +4,6 @@ const w2 = w / 3
 const h2 = h / 2
 const legendAxisHeight = h/3
 
-const titles = [
-  "Average temperature / prefecture (Celsius)",
-  "Highest temperature of monthly averages of daily highest (Celsius)",
-  "Lowest temperature among monthly averages of daily lowest (Celsius)",
-  "Yearly Precipitation (mm)"
-]
-
 var dataUrl
 const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/japan/jp-prefectures.json"
 const dataBaseUrl = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
@@ -40,6 +33,20 @@ var playing = false
 const indicatorIdArr = ["0102010000000010010", "0102010000000010020", "0102010000000010030", "0102020300000010010"]
 var indicatorId = indicatorIdArr[0]
 
+// Set title for map based on selected data
+var currentTitle
+const titles = [
+  "Average temperature (°C)",
+  "Highest temperature of monthly averages of daily highest (°C)",
+  "Lowest temperature among monthly averages of daily lowest (°C)",
+  "Yearly Precipitation (mm)"
+]
+const updateTitle = () => {
+  let titlesIndex = document.getElementById("select-data").selectedIndex
+  currentTitle = `${titles[titlesIndex]} ${yearRange[0]} - ${yearRange[1]}`
+  d3.select("#map-title").text(`${currentTitle}`)
+}
+
 // Function to change data source: reset timer; create new indicatorid based on selection, fetch new data.
 const changeData = () => {
   resetTimer()
@@ -49,6 +56,7 @@ const changeData = () => {
   indicatorId = indicatorIdArr[indicatorIndex]
   addClimateData()
   updateMap()
+  updateTitle()
 }
 
 // Slider for year
@@ -280,6 +288,7 @@ const addClimateData = () => {
         // Once map data and climate data obtained, draw map
         drawMap()
         animateMap()
+        updateTitle()
       }
     }
   )

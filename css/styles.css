@@ -39,6 +39,10 @@ body {
   left: 0;
 }
 
+#map-title {
+  text-align: center;
+}
+
 #year {
   display: inline-block;
 }

@@ -10,16 +10,49 @@ body {
   align-items: center;
 }
 
-#map-canvas {
-  display: block;
-  background-color: pink;
+.tick {
+  stroke: black;
+}
+
+#choropleth {
   width: 1000px;
+  background-color: yellow;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#map {
+  position: relative;
+  width: auto;
+  height: auto;
+}
+
+#map-canvas {
+  background-color: pink;
+}
+
+#map-canvas-inset {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#map-title {
+  text-align: center;
 }
 
 #year {
   display: inline-block;
 }
 
-.tick {
-  stroke: black;
+#play-btn {
+  fill: yellow;
+  cursor: pointer;
+}
+
+#play-btn-text {
+  color: black;
+  pointer-events: none;
 }

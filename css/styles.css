@@ -10,10 +10,29 @@ body {
   align-items: center;
 }
 
-#map-canvas {
-  display: block;
-  background-color: pink;
+#choropleth {
   width: 1000px;
+  background-color: yellow;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#map {
+  position: relative;
+  width: auto;
+  height: auto;
+}
+
+#map-canvas {
+  background-color: pink;
+}
+
+#map-canvas-inset {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #year {

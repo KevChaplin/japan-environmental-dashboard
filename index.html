@@ -14,19 +14,21 @@
 </head>
 
 <body>
-  <div id="header">
+  <div id="choropleth">
     <h1 id="title">Japan Environmental Dashboard</h1>
     <h3 id="description">Recent trends in climate related data</h3>
     <button id="play-btn">Play
     </button>
     <p id="year"></p><br>
-    <label for="data">Choose data:</lablel>
+    <label for="data">Choose data:</label>
     <select id="select-data" onchange="changeData()">
       <option>Average temperature</option>
       <option>Highest temperature of monthly averages of daily highest</option>
       <option>Lowest temperature among monthly averages of daily lowest</option>
       <option>Yearly Precipitation</option>
     </select>
+    <div id="map">
+    </div>
     <div id="tooltip">
     </div>
   </div>

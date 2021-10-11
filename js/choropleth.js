@@ -1,5 +1,7 @@
-const w = 1000
-const h = 600
+const w = 900
+const h = 500
+const w2 = w / 3
+const h2 = h / 2
 const legendAxisHeight = h/3
 
 var dataUrl
@@ -102,23 +104,40 @@ const resetTimer = () => {
 }
 
 // svg for prefectural map of data
-const svgMap = d3.select("body")
-                    .append("svg")
-                    .attr("id", "map-canvas")
-                    .attr("width", w)
-                    .attr("height", h)
-                    .style("fill", "green")
-                    .style("stroke", "white")
+const svgMap = d3.select("#map")
+                  .append("svg")
+                  .attr("id", "map-canvas")
+                  .attr("width", w)
+                  .attr("height", h)
+                  .style("fill", "green")
+                  .style("stroke", "white")
+
+const svgMapInset = d3.select("#map")
+                          .append("svg")
+                          .attr("id", "map-canvas-inset")
+                          .attr("width", w2)
+                          .attr("height", h2)
+                          .style("fill", "green")
+                          .style("stroke", "white")
+                          .attr("style", "outline: thin solid red;")
 
 // Set projection
 const projection = d3.geoMercator()
                       .center([137.5,36])
-                      .scale(2 * h)
-                      .translate([w / 2, h / 2]);
+                      .scale(2.9 * h)
+                      .translate([w / 2, h / 1.5]);
+
+const projectionInset = d3.geoMercator()
+                      .center([127.9,26.5])
+                      .scale(2.9 * h)
+                      .translate([w2 / 2, h2 / 2]);
 
 // set path generator
 const geoGenerator = d3.geoPath()
-                    .projection(projection)
+                        .projection(projection)
+
+const geoGeneratorInset = d3.geoPath()
+                            .projection(projectionInset)
 
 // Draw map function (to be called once data fetched from API)
 const drawMap = () => {
@@ -161,6 +180,23 @@ const drawMap = () => {
           let value = pref.value
           return dataScale(value)
         })
+
+  // EXPERIMENTAL - INSET MAP
+  svgMapInset.selectAll("path")
+              .data(prefectureData)
+              .enter()
+              .append("path")
+              .attr("d", geoGeneratorInset)
+              .attr("class", "prefecture")
+              // Prefecture name used to match and obtain climate data.
+              .attr("fill", prefDataItem => {
+                let id = prefDataItem.properties.NAME_1
+                let pref = climateData.find(item => {
+                  return ( (item.year === currentYear) && (item.prefecture === id) )
+                })
+                let value = pref.value
+                return dataScale(value)
+              })
 
   // Add legend-axis
   svgMap.append("g")

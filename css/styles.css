@@ -45,9 +45,10 @@ body {
 
 #play-btn {
   fill: yellow;
+  cursor: pointer;
 }
 
 #play-btn-text {
   color: black;
-  /* z-index: 3; */
+  pointer-events: none;
 }

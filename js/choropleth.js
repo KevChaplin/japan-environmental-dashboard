@@ -1,8 +1,15 @@
-const w = 700
-const h = 500
+const w = 800
+const h = 600
 const w2 = w / 3
 const h2 = h / 2
 const legendAxisHeight = h/3
+
+const titles = [
+  "Average temperature / prefecture (Celsius)",
+  "Highest temperature of monthly averages of daily highest (Celsius)",
+  "Lowest temperature among monthly averages of daily lowest (Celsius)",
+  "Yearly Precipitation (mm)"
+]
 
 var dataUrl
 const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/japan/jp-prefectures.json"
@@ -87,7 +94,7 @@ const animateMap = () => {
           slider.value([currentYear])
           updateMap()
         }, 500)
-        d3.select(this.text).text("Stop")
+        d3.select("#play-btn-text").text("Stop")
         playing = true
       } else {
         resetTimer()
@@ -222,10 +229,12 @@ const drawMap = () => {
         .attr('transform', () => `translate(${(2 * w / 3) - 40}, ${h - 50})`)
         .call(slider)
         .append("text")
+          .attr("pointer-events", "none")
           .attr("id", "year")
           .text(currentYear)
           .attr("text-anchor", "middle")
           .attr("transform", () => `translate(${(w / 6)}, -20)`)
+
 
   // Add "button" (rect element) to slider for play/stop functionality
   svgMap.select("#slider")

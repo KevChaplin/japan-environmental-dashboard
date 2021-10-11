@@ -1,4 +1,4 @@
-const w = 900
+const w = 700
 const h = 500
 const w2 = w / 3
 const h2 = h / 2
@@ -85,10 +85,9 @@ const animateMap = () => {
           if(currentYear < yearRange[1]) { currentYear ++}
           else {currentYear = yearRange[0]}
           slider.value([currentYear])
-          // d3.select("#slider").value([currentYear])
           updateMap()
         }, 500)
-        d3.select(this).html("stop")
+        d3.select(this.text).text("Stop")
         playing = true
       } else {
         resetTimer()
@@ -99,7 +98,7 @@ const animateMap = () => {
 // Reset timer
 const resetTimer = () => {
   clearInterval(timer)
-  d3.select("#play-btn").html("play")
+  d3.select("#play-btn-text").text("Play")
   playing = false
 }
 
@@ -109,19 +108,19 @@ const svgMap = d3.select("#map")
                   .attr("id", "map-canvas")
                   .attr("width", w)
                   .attr("height", h)
-                  .style("fill", "green")
                   .style("stroke", "white")
+                  .attr("style", "outline: thin solid white;")
 
+// svg for inset map of Okinawa region
 const svgMapInset = d3.select("#map")
                           .append("svg")
                           .attr("id", "map-canvas-inset")
                           .attr("width", w2)
                           .attr("height", h2)
-                          .style("fill", "green")
                           .style("stroke", "white")
-                          .attr("style", "outline: thin solid red;")
+                          .attr("style", "outline: thin solid white;")
 
-// Set projection
+// Set projection, main map and inset map
 const projection = d3.geoMercator()
                       .center([137.5,36])
                       .scale(2.9 * h)
@@ -129,10 +128,10 @@ const projection = d3.geoMercator()
 
 const projectionInset = d3.geoMercator()
                       .center([127.9,26.5])
-                      .scale(2.9 * h)
+                      .scale(6 * h)
                       .translate([w2 / 2, h2 / 2]);
 
-// set path generator
+// set path generator, main map and inset map
 const geoGenerator = d3.geoPath()
                         .projection(projection)
 
@@ -141,7 +140,7 @@ const geoGeneratorInset = d3.geoPath()
 
 // Draw map function (to be called once data fetched from API)
 const drawMap = () => {
-  d3.select("#year").text(current)
+  d3.select("#year").text(currentYear)
 
   // Get date range (years) of data
   yearRange = d3.extent(climateData, d => d.year)
@@ -181,7 +180,7 @@ const drawMap = () => {
           return dataScale(value)
         })
 
-  // EXPERIMENTAL - INSET MAP
+  // Create inset map of Okinawa region
   svgMapInset.selectAll("path")
               .data(prefectureData)
               .enter()
@@ -213,6 +212,7 @@ const drawMap = () => {
             .style("stroke", "none")
             .attr("transform", (d, i) => `translate(-20, ${legendAxisHeight - (legendAxisHeight * (i + 1) / 9)})`)
 
+  // -- Slider --
   // Remove old slider when updating to new data
   d3.select("#slider").remove()
 
@@ -221,6 +221,32 @@ const drawMap = () => {
         .attr("id", "slider")
         .attr('transform', () => `translate(${(2 * w / 3) - 40}, ${h - 50})`)
         .call(slider)
+        .append("text")
+          .attr("id", "year")
+          .text(currentYear)
+          .attr("text-anchor", "middle")
+          .attr("transform", () => `translate(${(w / 6)}, -20)`)
+
+  // Add "button" (rect element) to slider for play/stop functionality
+  svgMap.select("#slider")
+        .append("g")
+        .attr("id", "btn-marker")
+        .attr("transform", () => `translate(${w/3 -20}, -25)`)
+
+  // Add "button" (rect element) to slider for play/stop functionality & Add text to button
+  let btnMarker = d3.select("#btn-marker")
+
+  btnMarker.append("rect")
+            .attr("id", "play-btn")
+            .attr("width",  40)
+            .attr("height", 30)
+            .attr("transform", "translate(-20, -15)")
+
+  btnMarker.append("text")
+            .attr("id", "play-btn-text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate(0, 5)")
+            .text("Play")
 }
 
 // Fetch climate data function
@@ -241,7 +267,7 @@ const addClimateData = () => {
         })
         // set dateRange to range of dates of data, and set current displayed data to latest date's values
         yearRange = d3.extent(climateData, d => d.year)
-        current = yearRange[1]
+        currentYear = yearRange[1]
         // Once map data and climate data obtained, draw map
         drawMap()
         animateMap()

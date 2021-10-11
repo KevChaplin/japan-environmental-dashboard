@@ -10,6 +10,10 @@ body {
   align-items: center;
 }
 
+.tick {
+  stroke: black;
+}
+
 #choropleth {
   width: 1000px;
   background-color: yellow;
@@ -39,6 +43,11 @@ body {
   display: inline-block;
 }
 
-.tick {
-  stroke: black;
+#play-btn {
+  fill: yellow;
+}
+
+#play-btn-text {
+  color: black;
+  /* z-index: 3; */
 }

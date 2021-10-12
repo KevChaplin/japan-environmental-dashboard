@@ -2,11 +2,25 @@ const wClimate = 400
 const hClimate = 400
 const marginClimate = 30
 
+// Append svg for line graph
 const svgClimate = d3.select("#climate-line-graph")
                       .append("svg")
                         .attr("width", wClimate)
                         .attr("height", hClimate)
 
+// Set scales
+const xScaleClimate = d3.scaleLinear()
+                        .domain(d3.extent(climateDataNat, d => d.date))
+                        .range([marginClimate, wClimate - marginClimate])
+
+const yScaleClimate = d3.scaleLinear()
+                        .domain(d3.extent(climateDataNat, d => d.average)).nice()
+                        .range([marginClimate, hClimate - marginClimate])
+
+// --- Draw line graph ---
+
+
+// --- Fetch Data ---
 
 // Need data for all Japan. Data is prefectural, already obtained under choropleth.js - climateDataPref
 var dataUrl
@@ -61,12 +75,13 @@ const addClimateDataNat = () => {
             j++
           }
         }
-        climateDataNat.forEach(item => item.average = item.data.reduce((total, num) => total + num ) / item.data.filter(x => x).length)
+        // Calculate and add the averages for each year to give a national figure, convert year string into number "YYYY"
+        climateDataNat.forEach(item => {
+          item.average = item.data.filter(x => x).reduce((total, num) => total + num ) / item.data.filter(x => x).length
+          item.year = parseInt(item.year.substring(0,4))
+        })
         console.log(climateDataNat)
 
-        // set dateRange to range of dates of data  -- NEED TO CHANGE TO NUMBER
-        yearRangeClimateNat = d3.extent(climateDataNat, d => d.year)
-        console.log(yearRangeClimateNat)
       }
     }
   )

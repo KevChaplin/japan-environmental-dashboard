@@ -15,8 +15,7 @@ body {
 }
 
 #choropleth {
-  width: 1000px;
-  background-color: yellow;
+  width: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -30,7 +29,7 @@ body {
 }
 
 #map-canvas {
-  background-color: pink;
+  
 }
 
 #map-canvas-inset {

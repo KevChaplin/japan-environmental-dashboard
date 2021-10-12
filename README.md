@@ -9,7 +9,7 @@
 ## Personal Goals
 - Simulate a real work environment by using the Kanban work management system.
 - Design and build my own project using the D3js framework to enhance my skills there.
-- Use complex real-world API for data.
+- Use complex real-world REST API for data.
 - Add dual language functionality to a project for the first time.
 
 ## Navigation
@@ -19,7 +19,7 @@
 -
 
 ## If I had more time I would ...
--
+- Choropleth and climate line graph are using the same data sets. They currently use separate API fetch as. However, would like to combine into one API call and compare performance. ie. Several smaller API fetch vs one large API fetch.
 
 ## Resources
 - Framework: D3js

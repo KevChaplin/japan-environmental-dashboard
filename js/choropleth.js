@@ -9,7 +9,7 @@ const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/
 const dataBaseUrl = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
 
 var dataScale
-var climateData = []
+var climateDataPref = []
 
 // Colors for representing climate data differential (z-axis). Array of colors from d3-scale-chromatic. Color scale reversed to match data.
 const colors = []
@@ -54,7 +54,7 @@ const changeData = () => {
   slider.value([currentYear])
   let indicatorIndex = document.getElementById("select-data").selectedIndex
   indicatorId = indicatorIdArr[indicatorIndex]
-  addClimateData()
+  addclimateDataPref()
   updateMap()
   updateTitle()
 }
@@ -83,7 +83,7 @@ const updateMap = () => {
     .duration(100)
     .attr("fill", prefDataItem => {
       let id = prefDataItem.properties.NAME_1
-      let pref = climateData.find(item => {
+      let pref = climateDataPref.find(item => {
         return ( (item.year === currentYear) && (item.prefecture === id) )
       })
       let value = pref.value
@@ -124,7 +124,7 @@ const svgMap = d3.select("#map")
                   .attr("width", w)
                   .attr("height", h)
                   .style("stroke", "white")
-                  .attr("style", "outline: thin solid white;")
+                  .attr("style", "outline: thin solid black;")
 
 // svg for inset map of Okinawa region
 const svgMapInset = d3.select("#map")
@@ -133,7 +133,7 @@ const svgMapInset = d3.select("#map")
                           .attr("width", w2)
                           .attr("height", h2)
                           .style("stroke", "white")
-                          .attr("style", "outline: thin solid white;")
+                          .attr("style", "outline: thin solid black;")
 
 // Set projection, main map and inset map
 const projection = d3.geoMercator()
@@ -158,11 +158,11 @@ const drawMap = () => {
   d3.select("#year").text(currentYear)
 
   // Get date range (years) of data
-  yearRange = d3.extent(climateData, d => d.year)
+  yearRange = d3.extent(climateDataPref, d => d.year)
 
   // Colors representing climate data variance
   dataScale = d3.scaleQuantile()
-                  .domain(d3.extent(climateData, d => d.value))
+                  .domain(d3.extent(climateDataPref, d => d.value))
                   .range(colors)
 
   // Remove old legend when updating to new data
@@ -170,7 +170,7 @@ const drawMap = () => {
 
   // Legend scale
   const legendScale = d3.scaleLinear()
-                        .domain(d3.extent(climateData, d => d.value))
+                        .domain(d3.extent(climateDataPref, d => d.value))
                         .range([legendAxisHeight, 0])
 
   // Legend
@@ -188,7 +188,7 @@ const drawMap = () => {
         // Prefecture name used to match and obtain climate data.
         .attr("fill", prefDataItem => {
           let id = prefDataItem.properties.NAME_1
-          let pref = climateData.find(item => {
+          let pref = climateDataPref.find(item => {
             return ( (item.year === currentYear) && (item.prefecture === id) )
           })
           let value = pref.value
@@ -205,7 +205,7 @@ const drawMap = () => {
               // Prefecture name used to match and obtain climate data.
               .attr("fill", prefDataItem => {
                 let id = prefDataItem.properties.NAME_1
-                let pref = climateData.find(item => {
+                let pref = climateDataPref.find(item => {
                   return ( (item.year === currentYear) && (item.prefecture === id) )
                 })
                 let value = pref.value
@@ -266,8 +266,8 @@ const drawMap = () => {
             .text("Play")
 }
 
-// Fetch climate data function
-const addClimateData = () => {
+// Fetch climate data (prefectural) function
+const addclimateDataPref = () => {
   dataUrl = `${dataBaseUrl}&IndicatorCode=${indicatorId}`
   d3.json(dataUrl).then(
     (data, error) => {
@@ -275,7 +275,7 @@ const addClimateData = () => {
         console.log(error)
       } else {
         let dataAll =data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
-        climateData = dataAll.map(item => {
+        climateDataPref = dataAll.map(item => {
           return {
                 year: parseInt(item.VALUE["@time"].substring(0,4)),
                 prefecture: prefectures[parseInt(item.VALUE["@regionCode"].substring(0,2)) -1],
@@ -283,7 +283,7 @@ const addClimateData = () => {
           }
         })
         // set dateRange to range of dates of data, and set current displayed data to latest date's values
-        yearRange = d3.extent(climateData, d => d.year)
+        yearRange = d3.extent(climateDataPref, d => d.year)
         currentYear = yearRange[1]
         // Once map data and climate data obtained, draw map
         drawMap()
@@ -304,7 +304,7 @@ d3.json(japanMapDataUrl).then(
       // fix error in data "Naosaki" should be "Nagasaki" - below is temporary fix, issue raised on data repository 2021/10/07
       prefectureData[26].properties["NAME_1"] = "Nagasaki"
       // Once map data is obtained, fetch climate data
-      addClimateData()
+      addclimateDataPref()
     }
   }
 )

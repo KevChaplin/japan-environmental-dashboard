@@ -18,6 +18,8 @@
     <h1 id="title">Japan Environmental Dashboard</h2>
     <h3 id="description">Recent trends in climate related data</h3>
   </div>
+  <div id="climate-line-graph">
+  </div>
   <div id="choropleth">
     <h3 id="map-title">Average temperature (°C)</h3>
     <div>
@@ -38,6 +40,7 @@
 
 <script src="data/prefectures.js"></script>
 <script src="js/choropleth.js"></script>
+<script src="js/climateLineGraph.js"></script>
 <script type="module">
   import {interpolateYlGn} from "https://cdn.skypack.dev/d3-scale-chromatic@3";
   const yellow = interpolateYlGn(0); // "rgb(255, 255, 229)"

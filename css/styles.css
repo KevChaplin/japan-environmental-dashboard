@@ -1,6 +1,6 @@
 html, body {
   margin: 0;
-  height: 100vh;
+  height: auto;
 }
 
 body {
@@ -14,9 +14,9 @@ body {
   stroke: black;
 }
 
+/* Choropleth */
 #choropleth {
-  width: 1000px;
-  background-color: yellow;
+  width: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -30,7 +30,7 @@ body {
 }
 
 #map-canvas {
-  background-color: pink;
+
 }
 
 #map-canvas-inset {
@@ -55,4 +55,19 @@ body {
 #play-btn-text {
   color: black;
   pointer-events: none;
+}
+
+/* Climate line graph */
+
+#climate-line-graph {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#climate-title {
+  /* display: inline;
+  overflow: hidden; */
 }

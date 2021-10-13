@@ -14,6 +14,7 @@ body {
   stroke: black;
 }
 
+/* Choropleth */
 #choropleth {
   width: auto;
   display: flex;
@@ -54,4 +55,19 @@ body {
 #play-btn-text {
   color: black;
   pointer-events: none;
+}
+
+/* Climate line graph */
+
+#climate-line-graph {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#climate-title {
+  /* display: inline;
+  overflow: hidden; */
 }

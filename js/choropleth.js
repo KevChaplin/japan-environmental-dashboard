@@ -34,17 +34,17 @@ const indicatorIdArr = ["0102010000000010010", "0102010000000010020", "010201000
 var indicatorId = indicatorIdArr[0]
 
 // Set title for map based on selected data
-var currentTitle
-const titles = [
+var mapTitle
+const mapTitles = [
   "Average temperature (°C)",
   "Highest temperature of monthly averages of daily highest (°C)",
   "Lowest temperature among monthly averages of daily lowest (°C)",
   "Yearly Precipitation (mm)"
 ]
-const updateTitle = () => {
-  let titlesIndex = document.getElementById("select-data-map").selectedIndex
-  currentTitle = `${titles[titlesIndex]} ${yearRange[0]} - ${yearRange[1]}`
-  d3.select("#map-title").text(`${currentTitle}`)
+const updateMapTitle = () => {
+  let mapTitlesIndex = document.getElementById("select-data-map").selectedIndex
+  mapTitle = `${mapTitles[mapTitlesIndex]} ${yearRange[0]} - ${yearRange[1]}`
+  d3.select("#map-title").text(`${mapTitle}`)
 }
 
 // Function to change data source: reset timer; create new indicatorid based on selection, fetch new data.
@@ -56,7 +56,7 @@ const changeDataMap = () => {
   indicatorId = indicatorIdArr[indicatorIndex]
   addclimateDataPref()
   updateMap()
-  updateTitle()
+  updateMapTitle()
 }
 
 // Slider for year
@@ -288,7 +288,7 @@ const addclimateDataPref = () => {
         // Once map data and climate data obtained, draw map
         drawMap()
         animateMap()
-        updateTitle()
+        updateMapTitle()
       }
     }
   )

@@ -1,12 +1,42 @@
 const wClimate = 400
 const hClimate = 400
-const marginClimate = 30
+const marginClimate = 40
+
+var yearRangeClimate = [1975,2019]
 
 // Append svg for line graph
 const svgClimate = d3.select("#climate-line-graph-plot")
                       .append("svg")
+                        .attr("id", "svg-climate")
                         .attr("width", wClimate)
                         .attr("height", hClimate)
+
+// Set title for map based on selected data
+var climateTitle
+const climateTitles = [
+  "Average temperature - nationwide(°C)",
+  "Highest temperature of monthly averages of daily highs - nationwide average (°C)",
+  "Lowest temperature among monthly averages of daily lows - nationwide average (°C)",
+  "Yearly Precipitation - nationwide average (mm)"
+]
+
+const updateClimateTitle = () => {
+  let climateTitlesIndex = document.getElementById("select-data-climate").selectedIndex
+  climateTitle = `${climateTitles[climateTitlesIndex]} ${yearRange[0]} - ${yearRange[1]}`
+  d3.select("#climate-title").text(`${climateTitle}`)
+}
+
+// Function to change data source and fetch new data.
+const changeDataClimate = () => {
+  let indicatorIndexClimate = document.getElementById("select-data-climate").selectedIndex
+  indicatorIdClimate = indicatorIdArrClimate[indicatorIndexClimate]
+  d3.selectAll(".line").remove()
+  d3.selectAll(".axis").remove()
+  climateDataNat = []
+  addClimateData()
+  drawLineGraph()
+  updateClimateTitle()
+}
 
 // --- Draw line graph ---
 
@@ -30,6 +60,7 @@ const drawLineGraph = () => {
                           .scale(yScaleClimate)
 
     svgClimate.append("path")
+              .attr("class", "line")
               .datum(climateDataNat)
               .attr("fill", "none")
               .attr("stroke", "green")
@@ -39,28 +70,17 @@ const drawLineGraph = () => {
                 .y(function(d) { return yScaleClimate(d.average) })
                 )
 
-  // const line = d3.line()
-  //                 .x(function(d) { return xScaleClimate(d.year) })
-  //                 .y(function(d) { return yScaleClimate(d.average) })
-  //
-  // const lines = svgClimate.selectAll("lines")
-  //                         .data(climateDataNat)
-  //                         .enter()
-  //                         .append("g")
-  //
-  // lines.append("path")
-  //       .attr("d", function(d) {return line(d)})
-
   // Create x-axis
   svgClimate.append("g")
+            .attr("class", "axis")
             .attr("transform", `translate(0, ${hClimate - marginClimate})`)
             .call(xAxisClimate);
 
   // Create y-axis
   svgClimate.append("g")
+            .attr("class", "axis")
             .attr("transform", `translate(${marginClimate}, 0)`)
-            // .attr("transform", `translate(${marginClimate}, ${hClimate - marginClimate})`)
-            .call(yAxisClimate);
+            .call(yAxisClimate)
 
   }
 
@@ -84,49 +104,53 @@ var climateDataNat = []
 
 // Fetch climate data (prefectural) function
 
-dataUrl = `${dataBaseUrlClimate}&IndicatorCode=${indicatorIdClimate}`
-d3.json(dataUrl).then(
-  (data, error) => {
-    if(error) {
-      console.log(error)
-    } else {
+const addClimateData = () => {
+  dataUrl = `${dataBaseUrlClimate}&IndicatorCode=${indicatorIdClimate}`
+  d3.json(dataUrl).then(
+    (data, error) => {
+      if(error) {
+        console.log(error)
+      } else {
 
-      // Loop through data to extract yearly array of data values to be used to calculate averages.
-      let dataAll =data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
+        // Loop through data to extract yearly array of data values to be used to calculate averages.
+        let dataAll =data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
 
-      // Loop ththough fetched data
-      for (let i= 0, j=0; i < dataAll.length; i++) {
-        let newObject = {
-            year: "",
-            data: [],
-            average: ""
+        // Loop ththough fetched data
+        for (let i= 0, j=0; i < dataAll.length; i++) {
+          let newObject = {
+              year: "",
+              data: [],
+              average: ""
+            }
+          // If dataset "climateDataNat" is empty, set year and add data to data array. j = current index of climateDataNat array.
+          if (climateDataNat.length === 0) {
+            newObject.year = dataAll[i].VALUE["@time"]
+            newObject.data.push(parseFloat(dataAll[i].VALUE["$"]))
+            climateDataNat.push(newObject)
           }
-        // If dataset "climateDataNat" is empty, set year and add data to data array. j = current index of climateDataNat array.
-        if (climateDataNat.length === 0) {
-          newObject.year = dataAll[i].VALUE["@time"]
-          newObject.data.push(parseFloat(dataAll[i].VALUE["$"]))
-          climateDataNat.push(newObject)
+          // Else if year is same for climateDataNat and dataAll item, add items data value to climateDataNat data
+          else if (dataAll[i].VALUE["@time"] === climateDataNat[j].year) {
+            climateDataNat[j].data.push(parseFloat(dataAll[i].VALUE["$"]))
+          }
+          // Else (climateDataNat is not empty and year is different), calculate average, add new object with the new year, add value from dataAll item to new object, increment j
+          else {
+            newObject.year = dataAll[i].VALUE["@time"]
+            newObject.data.push(parseFloat(dataAll[i].VALUE["$"]))
+            climateDataNat.push(newObject)
+            j++
+          }
         }
-        // Else if year is same for climateDataNat and dataAll item, add items data value to climateDataNat data
-        else if (dataAll[i].VALUE["@time"] === climateDataNat[j].year) {
-          climateDataNat[j].data.push(parseFloat(dataAll[i].VALUE["$"]))
-        }
-        // Else (climateDataNat is not empty and year is different), calculate average, add new object with the new year, add value from dataAll item to new object, increment j
-        else {
-          newObject.year = dataAll[i].VALUE["@time"]
-          newObject.data.push(parseFloat(dataAll[i].VALUE["$"]))
-          climateDataNat.push(newObject)
-          j++
-        }
+        // Calculate and add the averages for each year to give a national figure, convert year string into number "YYYY"
+        climateDataNat.forEach(item => {
+          item.average = item.data.filter(x => x).reduce((total, num) => total + num ) / item.data.filter(x => x).length
+          item.year = parseInt(item.year.substring(0,4))
+        })
+        yearRangeClimate = d3.extent(climateDataNat, d => d.year)
+        // ONce data has been obtained
+        drawLineGraph()
       }
-      // Calculate and add the averages for each year to give a national figure, convert year string into number "YYYY"
-      climateDataNat.forEach(item => {
-        item.average = item.data.filter(x => x).reduce((total, num) => total + num ) / item.data.filter(x => x).length
-        item.year = parseInt(item.year.substring(0,4))
-      })
-      console.log(climateDataNat)
-      // ONce data has been obtained
-      drawLineGraph()
     }
-  }
-)
+  )
+}
+
+addClimateData()

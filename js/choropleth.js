@@ -42,17 +42,17 @@ const titles = [
   "Yearly Precipitation (mm)"
 ]
 const updateTitle = () => {
-  let titlesIndex = document.getElementById("select-data").selectedIndex
+  let titlesIndex = document.getElementById("select-data-map").selectedIndex
   currentTitle = `${titles[titlesIndex]} ${yearRange[0]} - ${yearRange[1]}`
   d3.select("#map-title").text(`${currentTitle}`)
 }
 
 // Function to change data source: reset timer; create new indicatorid based on selection, fetch new data.
-const changeData = () => {
+const changeDataMap = () => {
   resetTimer()
   currentYear = yearRange[1]
   slider.value([currentYear])
-  let indicatorIndex = document.getElementById("select-data").selectedIndex
+  let indicatorIndex = document.getElementById("select-data-map").selectedIndex
   indicatorId = indicatorIdArr[indicatorIndex]
   addclimateDataPref()
   updateMap()

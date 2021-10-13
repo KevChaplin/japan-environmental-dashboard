@@ -86,7 +86,7 @@ const drawLineGraph = () => {
 
 // --- Fetch Data ---
 
-// Need data for all Japan. Data is prefectural, already obtained under choropleth.js - climateDataPref
+// Need data for all Japan. Data is prefectural.
 var dataUrl
 const dataBaseUrlClimate = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
 

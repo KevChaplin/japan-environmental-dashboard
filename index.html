@@ -14,10 +14,12 @@
 </head>
 
 <body>
+
   <div id="page-title">
     <h1 id="title">Japan Environmental Dashboard</h2>
     <h3 id="description">Recent trends in climate related data</h3>
   </div>
+
   <div id="climate-line-graph">
     <h3 id="climate-title">Average temperature - Nationwide (°C)</h3>
     <div>
@@ -32,10 +34,17 @@
     <div id="climate-line-graph-plot">
     </div>
   </div>
+
+  <div id="energy-bar-graph">
+    <h3 id="energy-title">Energy Production by Source (million kWh)</h3>
+    <div id="energy-bar-graph-plot">
+    </div>
+  </div>
+
   <div id="choropleth">
     <h3 id="map-title">Average temperature (°C)</h3>
     <div>
-      <label for="slect-data-map">Choose data:</label>
+      <label for="select-data-map">Choose data:</label>
       <select id="select-data-map" onchange="changeDataMap()">
         <option>Average temperature</option>
         <option>Highest monthly average - high temps</option>
@@ -48,11 +57,13 @@
     <div id="tooltip">
     </div>
   </div>
+
 </body>
 
 <script src="data/prefectures.js"></script>
 <script src="js/choropleth.js"></script>
 <script src="js/climateLineGraph.js"></script>
+<script src="js/energyBarGraph.js"></script>
 <script type="module">
   import {interpolateYlGn} from "https://cdn.skypack.dev/d3-scale-chromatic@3";
   const yellow = interpolateYlGn(0); // "rgb(255, 255, 229)"

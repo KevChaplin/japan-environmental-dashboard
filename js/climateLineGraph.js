@@ -1,5 +1,5 @@
-const wClimate = 400
-const hClimate = 400
+const wClimate = 500
+const hClimate = 500
 const marginClimate = 40
 
 var yearRangeClimate = [1975,2019]
@@ -86,7 +86,7 @@ const drawLineGraph = () => {
 
 // --- Fetch Data ---
 
-// Need data for all Japan. Data is prefectural, already obtained under choropleth.js - climateDataPref
+// Need data for all Japan. Data is prefectural.
 var dataUrl
 const dataBaseUrlClimate = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
 

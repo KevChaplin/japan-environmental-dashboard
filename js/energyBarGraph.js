@@ -1,3 +1,8 @@
+// const wClimate = 400
+// const hClimate = 400
+// const marginClimate = 40
+
+
 // --- Fetch Data ---
 
 var dataUrl
@@ -10,35 +15,26 @@ const indicatorIdEnergyTypes = ["0901020000000010010", "0901020000000010020", "0
 
 var energyData = []
 
-// Fetch energy production data function - API request from all indicatorId simultaneously
-dataUrl = `${dataBaseUrlClimate}&IndicatorCode=${indicatorIdEnergyTypes[0]}`
-console.log(dataUrl)
-
-d3.json(dataUrl).then(
-  (data, error) => {
-    if(error) {
-      console.log(error)
-    } else {
-      let dataAll =data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
-      console.log(dataAll)
-      let newObject = {
-        energyType: energyTypes[0],
-        data: []
-        }
-      // For each set of data, create an object with energy type, and array of [year, value] data points.
-      dataAll.forEach(item => newObject.data.push([ parseInt(item.VALUE["@time"].substring(0,4)), item.VALUE["$"] ]) )
-      energyData.push(newObject)
+// Loop over all indicator Ids to obtain all data in one dataset - array of objects containing one energy source type and array of all year - energy production pair values.
+for (let i=0; i < energyTypes.length; i++) {
+  // Fetch energy production data function
+  dataUrl = `${dataBaseUrlClimate}&IndicatorCode=${indicatorIdEnergyTypes[i]}`
+  d3.json(dataUrl).then(
+    (data, error) => {
+      if(error) {
+        console.log(error)
+      } else {
+        let dataAll = data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
+        let newObject = {
+          energyType: energyTypes[i],
+          data: []
+          }
+        // For each set of data, create an object with energy type, and array of [year, value] data points.
+        dataAll.forEach(item => newObject.data.push([ parseInt(item.VALUE["@time"].substring(0,4)), item.VALUE["$"] ]) )
+        energyData.push(newObject)
+      }
     }
-  }
-)
+  )
+}
 
-//
-// let newObject = {
-//   year: "",
-//   thermal: "",
-//   nuclear: "",
-//   geothermal: "",
-//   hydro: "",
-//   photovoltaic: "",
-//   wind: ""
-//   }
+console.log(energyData)

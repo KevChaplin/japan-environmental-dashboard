@@ -1,7 +1,8 @@
-const wEnergy = 400
-const hEnergy = 400
+const wEnergy = 500
+const hEnergy = 500
 const marginEnergy = 40
 const marginEnergyLeft = 80
+const marginEnergyTop = 60
 
 // Append svg for bar graph
 const svgEnergy = d3.select("#energy-bar-graph-plot")
@@ -37,7 +38,7 @@ const drawBarGraph = () => {
   const yScaleEnergy = d3.scaleLinear()
                           .domain([0, d3.max(totalOutputArr, d => d)])
                           .nice()
-                          .range([hEnergy - marginEnergy, marginEnergy])
+                          .range([hEnergy - marginEnergy, marginEnergyTop])
 
   // Add axes
 
@@ -52,9 +53,11 @@ const drawBarGraph = () => {
             .call(d3.axisLeft(yScaleEnergy))
 
   // Color palette for energy type
+  const colorArrEnergy = ["#6929c4","#9f1853","#198038","#b28600","#8a3800","#1192e8"]
+
   const colorEnergy = d3.scaleOrdinal()
                         .domain(energyTypes)
-                        .range(["#6929c4","#9f1853","#198038","#b28600","#8a3800","#1192e8"])
+                        .range(colorArrEnergy)
 
   // Stack the data per energy type
   // Data format is required to be in series i.e. [{year: xx, Thermal: xx, Nuclear: xx, Geothermal: xx, ...}, {}, ...]
@@ -95,8 +98,30 @@ const drawBarGraph = () => {
                 .attr("height", d => yScaleEnergy(d[0]) - yScaleEnergy(d[1]))
                 .attr("width",xScaleEnergy.bandwidth())
 
-  console.log(seriesData)
-  console.log(energyData)
+  // Add legend
+  const legendEnergy = svgEnergy.append("g")
+                                .attr("id", "legend-energy")
+                                .attr("transform", "translate(0, 30)")
+
+  const legendItemsEnergy = legendEnergy.selectAll("g")
+                                        .data(energyTypes)
+                                        .enter()
+                                        .append("g")
+                                        .attr("transform", (type, i) => `translate(${(i*wEnergy/6) + (wEnergy/6/2)}, 0)`)
+
+  // Square icon for legend
+  legendItemsEnergy.append("rect")
+                    .attr("class", "legend-energy-item")
+                    .attr("fill", (type, i) => colorArrEnergy[i])
+                    .attr("height", 10)
+                    .attr("width", 10)
+                    .attr("transform", "translate(-5, -25)")
+
+  // Labels for legend
+  legendItemsEnergy.append("text")
+                    .text(type => type)
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "translate(0, 5)")
 
 }
 

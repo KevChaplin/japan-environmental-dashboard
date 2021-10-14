@@ -1,5 +1,5 @@
-const wClimate = 400
-const hClimate = 400
+const wClimate = 500
+const hClimate = 500
 const marginClimate = 40
 
 var yearRangeClimate = [1975,2019]

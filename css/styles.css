@@ -67,7 +67,11 @@ body {
   align-items: center;
 }
 
-#climate-title {
-  /* display: inline;
-  overflow: hidden; */
+/* Energy Bar Graph */
+#energy-bar-graph {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 }

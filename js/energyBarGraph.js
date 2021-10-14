@@ -1,6 +1,7 @@
 const wEnergy = 400
 const hEnergy = 400
 const marginEnergy = 40
+const marginEnergyLeft = 80
 
 // Append svg for bar graph
 const svgEnergy = d3.select("#energy-bar-graph-plot")
@@ -30,7 +31,7 @@ const drawBarGraph = () => {
 
   const xScaleEnergy = d3.scaleBand()
                           .domain(years)
-                          .range([marginEnergy, wEnergy - marginEnergy])
+                          .range([marginEnergyLeft, wEnergy - marginEnergy])
                           .padding([0.2])
 
   const yScaleEnergy = d3.scaleLinear()
@@ -47,13 +48,55 @@ const drawBarGraph = () => {
 
   // y-axis
   svgEnergy.append("g")
-            .attr("transform", `translate(${marginEnergy}, 0)`)
+            .attr("transform", `translate(${marginEnergyLeft}, 0)`)
             .call(d3.axisLeft(yScaleEnergy))
 
-  console.log(years)
+  // Color palette for energy type
+  const colorEnergy = d3.scaleOrdinal()
+                        .domain(energyTypes)
+                        .range(["#6929c4","#9f1853","#198038","#b28600","#8a3800","#1192e8"])
+
+  // Stack the data per energy type
+  // Data format is required to be in series i.e. [{year: xx, Thermal: xx, Nuclear: xx, Geothermal: xx, ...}, {}, ...]
+  // Convert data
+
+  let seriesData = []
+  const getVal = (typeStr, year) =>  energyData.find(d => d.energyType === typeStr).data.find(x => x[0] === year)[1]
+  years.forEach(year => seriesData.push(
+    {
+    year: year,
+    Thermal: getVal("Thermal",year),
+    Nuclear: getVal("Nuclear",year),
+    Geothermal: getVal("Geothermal",year),
+    Hydro: getVal("Hydro",year),
+    Photovoltaic: getVal("Photovoltaic",year),
+    Wind: getVal("Wind",year)
+    }
+  ))
+
+  const stackedData = d3.stack()
+                        .keys(energyTypes)
+
+  const series = stackedData(seriesData)
+
+  // Add the bars
+  svgEnergy.append("g")
+            .selectAll("g")
+            // Enter in the series data = loop key per key = group per group
+            .data(series)
+            .join("g")
+              .attr("fill", d => colorEnergy(d.key))
+              .selectAll("rect")
+              // enter a second time = loop subgroup per subgroup to add all rectangles
+              .data(d => d)
+              .join("rect")
+                .attr("x", d => xScaleEnergy(d.data.year))
+                .attr("y", d => yScaleEnergy(d[1]))
+                .attr("height", d => yScaleEnergy(d[0]) - yScaleEnergy(d[1]))
+                .attr("width",xScaleEnergy.bandwidth())
+
+  console.log(seriesData)
   console.log(energyData)
-  console.log(totalOutputArr)
-  console.log(d3.max(totalOutputArr, d => d))
 
 }
 

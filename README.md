@@ -1,6 +1,4 @@
-# WORK IN PROGRESS
-
-# Japan Environmental Dashboard
+# Japan Environmental Dashboard v1.0
 ### By Kevin Chaplin
 
 ## Project Goals

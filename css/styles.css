@@ -49,6 +49,7 @@ body {
 
 #map-title {
   text-align: center;
+  border-top: 40px;
 }
 
 #year {

@@ -1,5 +1,5 @@
-const wEnergy = 500
-const hEnergy = 500
+const wEnergy = 600
+const hEnergy = 380
 const marginEnergy = 40
 const marginEnergyLeft = 80
 const marginEnergyTop = 60

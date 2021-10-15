@@ -1,5 +1,5 @@
-const wClimate = 500
-const hClimate = 500
+const wClimate = 600
+const hClimate = 380
 const marginClimate = 40
 
 var yearRangeClimate = [1975,2019]
@@ -14,7 +14,8 @@ const svgClimate = d3.select("#climate-line-graph-plot")
 // Set title for map based on selected data
 var climateTitle
 const climateTitles = [
-  "Average temperature - nationwide(°C)",
+  "Average temperature \
+  - nationwide(°C)",
   "Highest temperature of monthly averages of daily highs - nationwide average (°C)",
   "Lowest temperature among monthly averages of daily lows - nationwide average (°C)",
   "Yearly Precipitation - nationwide average (mm)"

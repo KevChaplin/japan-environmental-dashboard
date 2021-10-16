@@ -3,6 +3,7 @@ const hEnergy = 380
 const marginEnergy = 40
 const marginEnergyLeft = 80
 const marginEnergyTop = 60
+let loadingEnergy = false
 
 // Append svg for bar graph
 const svgEnergy = d3.select("#energy-bar-graph-plot")
@@ -129,6 +130,8 @@ const drawBarGraph = () => {
 var energyData = []
 
 const addEnergyData = () => {
+  loadingEnergy = true
+  console.log(loadingEnergy)
   const dataBaseUrlEnergy = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
   // Data Indicator Ids as referenced on https://dashboard.e-stat.go.jp/en/static/api#skip_to_context
   // Used to construct url for data retrieval from API.
@@ -162,9 +165,11 @@ const addEnergyData = () => {
           })
         energyData.push(newObject)
       }))
-      //TEMPORARY FIX - energyData reading as empty array on drawGraph function call
-      setTimeout(function() {drawBarGraph()}, 1000)
-
+    .then(newResult => {
+      loadingEnergy = false
+      console.log(loadingEnergy)
+      drawBarGraph()
+      })
 }
 
 addEnergyData()

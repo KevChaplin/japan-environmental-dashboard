@@ -105,6 +105,9 @@ var climateDataNat = []
 
 // Fetch climate data (prefectural) function
 const addClimateData = () => {
+  // Show loading animation
+  d3.select(".line-loading").style("visibility", "visible")
+  // Create Url
   dataUrl = `${dataBaseUrlClimate}&IndicatorCode=${indicatorIdClimate}`
   d3.json(dataUrl).then(
     (data, error) => {
@@ -144,6 +147,8 @@ const addClimateData = () => {
         })
         yearRangeClimate = d3.extent(climateDataNat, d => d.year)
         // Once data has been obtained
+        // Hide loading animation
+        d3.select(".line-loading").style("visibility", "hidden")
         drawLineGraph()
       }
     }

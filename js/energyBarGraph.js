@@ -130,8 +130,8 @@ const drawBarGraph = () => {
 var energyData = []
 
 const addEnergyData = () => {
-  loadingEnergy = true
-  console.log(loadingEnergy)
+  // Show loading animation
+  d3.select(".bar-loading").style("visibility", "visible")
   const dataBaseUrlEnergy = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
   // Data Indicator Ids as referenced on https://dashboard.e-stat.go.jp/en/static/api#skip_to_context
   // Used to construct url for data retrieval from API.
@@ -166,8 +166,8 @@ const addEnergyData = () => {
         energyData.push(newObject)
       }))
     .then(newResult => {
-      loadingEnergy = false
-      console.log(loadingEnergy)
+      // Hide loading animation
+      d3.select(".bar-loading").style("visibility", "hidden")
       drawBarGraph()
       })
 }

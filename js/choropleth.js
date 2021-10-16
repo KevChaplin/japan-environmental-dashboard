@@ -274,6 +274,8 @@ const addclimateDataPref = () => {
       if(error) {
         console.log(error)
       } else {
+        // Hide loading animation
+        d3.select(".map-loading").style("visibility", "hidden")
         let dataAll =data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
         climateDataPref = dataAll.map(item => {
           return {
@@ -297,6 +299,8 @@ const addclimateDataPref = () => {
 // Import data - map data is converted from topojson format; climate data imported after map data loaded
 d3.json(japanMapDataUrl).then(
   (data, error) => {
+    // Show loading animation
+    d3.select(".map-loading").style("visibility", "visible")
     if(error) {
       console.log(error)
     } else {

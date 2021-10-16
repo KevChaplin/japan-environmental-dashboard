@@ -18,7 +18,7 @@
 - The intention is show trends over time as opposed to single data points.
 
 ## Known issues
-- Bar graph data taking too long to load and thus not displaying sometimes.
+- None
 
 ## If I had more time I would ... / Next steps
 - App is not yet responsive, only set up for full-page/16:9

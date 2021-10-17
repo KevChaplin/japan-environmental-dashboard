@@ -4,11 +4,17 @@ html, body {
 }
 
 body {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  grid-template-rows: 1fr 1fr;
-
+  width: 100vw;
 }
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+}
+
 /* Loading Icon */
 .lds-dual-ring {
   position: absolute;
@@ -53,28 +59,26 @@ body {
 
 /* Page Title */
 #page-title {
-  position: absolute;
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  pointer-events: none;
-}
-
-/* Choropleth */
-#choropleth {
-  grid-column: 2 / 3;
-  grid-row: 1 / 3;
-  width: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 10vh;
 }
 
+#title {
+  margin: 0
+}
+
+#description {
+  margin: 0
+}
+
+/* Choropleth */
 #map {
   position: relative;
   width: auto;
-  height: auto;
   margin-top: 20px;
 }
 
@@ -104,33 +108,96 @@ body {
 }
 
 /* Climate line graph */
+
+/* test */
+/* #climate-line-graph {
+  position: relative;
+  width: auto;
+}
+
+#energy-bar-graph {
+  position: relative;
+  width: auto;
+} */
+  /* test */
+
 #climate-title {
   padding: 0 40px;
   margin: 10px 0;
 }
 
-#climate-line-graph {
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
-  width: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
-
 /* Energy Bar Graph */
+
 #energy-title {
   padding: 0 40px;
   margin: 10px 0;
 }
 
-#energy-bar-graph {
-  grid-column: 1 / 2;
-  grid-row: 2 / 3;
-  width: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 770px) {
+
+  #grid-container {
+    background-color: pink;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 2fr;
+  }
+
+  #climate-line-graph {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    height: 100%;
+  }
+
+  #energy-bar-graph {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    height: 100%;
+  }
+
+  #choropleth {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+  }
+
+}
+
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+
+  #grid-container {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  #page-title {
+    position: absolute;
+  }
+
+  #energy-bar-graph {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+
+  }
+
+  #climate-line-graph {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  #choropleth {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+  }
+
+  /* #climate-line-graph-plot {
+    background-color: pink;
+    height: 100%;
+    width: 100%;
+  } */
+
 }

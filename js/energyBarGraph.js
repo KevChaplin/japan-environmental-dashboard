@@ -1,16 +1,7 @@
-const wEnergy = 600
-const hEnergy = 380
 const marginEnergy = 40
 const marginEnergyLeft = 80
 const marginEnergyTop = 60
 let loadingEnergy = false
-
-// Append svg for bar graph
-const svgEnergy = d3.select("#energy-bar-graph-plot")
-                      .append("svg")
-                        .attr("id", "svg-energy")
-                        .attr("width", wEnergy)
-                        .attr("height", hEnergy)
 
 // List of energy sources, to be bar graph subgroups
 const energyTypes = [ "Thermal", "Nuclear", "Geothermal", "Hydro", "Photovoltaic", "Wind" ]
@@ -18,6 +9,14 @@ const energyTypes = [ "Thermal", "Nuclear", "Geothermal", "Hydro", "Photovoltaic
 // --- Draw line graph ---
 
 const drawBarGraph = () => {
+
+  // Append svg for bar graph
+  const svgEnergy = d3.select("#energy-bar-graph-plot")
+                        .append("svg")
+                          .attr("id", "svg-energy")
+                          .attr("width", width)
+                          .attr("height", height)
+
   // List of years, to be used as groups for bar graph
   let years = energyData[0].data.map(item => item[0])
 
@@ -33,19 +32,19 @@ const drawBarGraph = () => {
 
   const xScaleEnergy = d3.scaleBand()
                           .domain(years)
-                          .range([marginEnergyLeft, wEnergy - marginEnergy])
+                          .range([marginEnergyLeft, width - marginEnergy])
                           .padding([0.2])
 
   const yScaleEnergy = d3.scaleLinear()
                           .domain([0, d3.max(totalOutputArr, d => d)])
                           .nice()
-                          .range([hEnergy - marginEnergy, marginEnergyTop])
+                          .range([height - marginEnergy, marginEnergyTop])
 
   // Add axes
 
   // X-axis
   svgEnergy.append("g")
-            .attr("transform", `translate(0, ${hEnergy - marginEnergy})`)
+            .attr("transform", `translate(0, ${height - marginEnergy})`)
             .call(d3.axisBottom(xScaleEnergy).tickSizeOuter(0))
 
   // y-axis
@@ -108,7 +107,7 @@ const drawBarGraph = () => {
                                         .data(energyTypes)
                                         .enter()
                                         .append("g")
-                                        .attr("transform", (type, i) => `translate(${(i*wEnergy/6) + (wEnergy/6/2)}, 0)`)
+                                        .attr("transform", (type, i) => `translate(${(i*width/6) + (width/6/2)}, 0)`)
 
   // Square icon for legend
   legendItemsEnergy.append("rect")
@@ -123,6 +122,9 @@ const drawBarGraph = () => {
                     .text(type => type)
                     .attr("text-anchor", "middle")
                     .attr("transform", "translate(0, 5)")
+
+  // div is initially hidden, visble after svg created to prevent "pop-in"
+  d3.select("#energy-bar-graph").style("visibility", "visible")
 
 }
 

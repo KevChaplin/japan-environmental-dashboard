@@ -34,6 +34,7 @@
   - This service uses the API feature of Statistics Dashboard, but the contents of this service are not guaranteed by the Statistics Bureau of Japan
 - Japan Topojson data: https://github.com/deldersveld/topojson
 - d3-simple-slider: https://github.com/johnwalley/d3-simple-slider
+- Loading animation code courtesy of https://loading.io/css/
 
 ## Other Notes
 - Error in Topojson data - Nagasaki prefecture's name listed as "Naosaki" - issue raised, error corrected within application.

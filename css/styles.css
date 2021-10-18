@@ -110,8 +110,10 @@ body {
 }
 
 #play-btn {
-  fill: yellow;
+  fill: #bfbfbf;
   cursor: pointer;
+  stroke: black;
+  stroke-width: 2px;
 }
 
 #play-btn-text {

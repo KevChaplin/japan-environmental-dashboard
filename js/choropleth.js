@@ -280,6 +280,7 @@ const drawMap = () => {
             .attr("width",  40)
             .attr("height", 30)
             .attr("transform", "translate(-20, -15)")
+            .attr("rx", "5")
 
   btnMarker.append("text")
             .attr("id", "play-btn-text")

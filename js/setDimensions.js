@@ -9,6 +9,8 @@ const setDim = () => {
     height = 0.8 * windowWidth
     wMap = 0.8 * windowWidth
     hMap = 0.7 * windowWidth
+    d3.select("#grid-container")
+      .style("height", "auto")
     // For laptop / larger tablets
   } else if (windowWidth < 1200) {
     width = 0.45 * windowWidth

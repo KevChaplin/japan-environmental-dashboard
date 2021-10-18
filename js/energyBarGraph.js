@@ -6,16 +6,24 @@ let loadingEnergy = false
 // List of energy sources, to be bar graph subgroups
 const energyTypes = [ "Thermal", "Nuclear", "Geothermal", "Hydro", "Photovoltaic", "Wind" ]
 
-// --- Draw line graph ---
-
-const drawBarGraph = () => {
-
-  // Append svg for bar graph
-  const svgEnergy = d3.select("#energy-bar-graph-plot")
+// Append svg for bar graphh - function so it can be called after removing svg for resizing/updating
+const addEnergySvg = () => {
+  svgEnergy = d3.select("#energy-bar-graph-plot")
                         .append("svg")
                           .attr("id", "svg-energy")
                           .attr("width", width)
                           .attr("height", height)
+}
+
+// Redraw function - include re-appending plot svg
+const reDrawEnergy = () => {
+  addEnergySvg()
+  drawBarGraph()
+}
+
+// --- Draw line graph ---
+
+const drawBarGraph = () => {
 
   // List of years, to be used as groups for bar graph
   let years = energyData[0].data.map(item => item[0])
@@ -174,4 +182,6 @@ const addEnergyData = () => {
       })
 }
 
+// On initial load, add svg, run addClimtateData fuction (which adds data and draws graph)
+addEnergySvg()
 addEnergyData()

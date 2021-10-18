@@ -27,6 +27,17 @@ var playing = false
 const indicatorIdArr = ["0102010000000010010", "0102010000000010020", "0102010000000010030", "0102020300000010010"]
 var indicatorId = indicatorIdArr[0]
 
+// Append svg for line graph - function so it can be called after removing svg for resizing/updating
+const addSvgMap = () => {
+  svgMap = d3.select("#map")
+                    .append("svg")
+                      .attr("id", "map-canvas")
+                      .attr("width", wMap)
+                      .attr("height", hMap)
+                      .style("stroke", "white")
+                      .attr("style", "outline: thin solid black;")
+}
+
 // Set title for map based on selected data
 var mapTitle
 const mapTitles = [
@@ -41,20 +52,6 @@ const updateMapTitle = () => {
   d3.select("#map-title").text(`${mapTitle}`)
 }
 
-// Slider for year
-var slider = d3.sliderHorizontal()
-                .value([yearRange[1]])
-                .min(yearRange[0])
-                .max(yearRange[1])
-                .step(1)
-                .width(wMap / 3)
-                .displayValue(false)
-                .tickFormat(d3.format("d"))
-                .on('onchange', (val) => {
-                  currentYear = val
-                  updateMap()
-                })
-
 // Function to change data source: reset timer; create new indicatorid based on selection, fetch new data.
 const changeDataMap = () => {
   resetTimer()
@@ -64,6 +61,7 @@ const changeDataMap = () => {
   indicatorId = indicatorIdArr[indicatorIndex]
   d3.select("#map-canvas").remove()
   d3.select("#map-canvas-inset").remove()
+  addSvgMap()
   addclimateDataPref()
   updateMap()
   updateMapTitle()
@@ -86,6 +84,27 @@ const updateMap = () => {
       return dataScale(value)
   })
 }
+
+// Redraw function after resizing - include re-appending plot svg
+const reDrawMap = () => {
+  addSvgMap()
+  drawMap()
+}
+
+let sliderTicks = null
+// Slider for year
+let slider = d3.sliderHorizontal()
+                .value([yearRange[1]])
+                .min(yearRange[0])
+                .max(yearRange[1])
+                .step(1)
+                .displayValue(false)
+                .tickValues(sliderTicks)
+                .tickFormat(d3.format("d"))
+                .on('onchange', (val) => {
+                  currentYear = val
+                  updateMap()
+                })
 
 // Animate map data by iterating through years
 const animateMap = () => {
@@ -120,14 +139,8 @@ const drawMap = () => {
   let hMap2 = hMap / 2
   let legendAxisHeight = hMap / 3
 
-  // svg for prefectural map of data
-  const svgMap = d3.select("#map")
-                    .append("svg")
-                      .attr("id", "map-canvas")
-                      .attr("width", wMap)
-                      .attr("height", hMap)
-                      .style("stroke", "white")
-                      .attr("style", "outline: thin solid black;")
+  // Set slider width
+  slider.width(wMap / 3)
 
   // svg for inset map of Okinawa region
   const svgMapInset = d3.select("#map")
@@ -155,6 +168,7 @@ const drawMap = () => {
 
   const geoGeneratorInset = d3.geoPath()
                               .projection(projectionInset)
+
 
   // Update indicated year
   d3.select("#year").text(currentYear)
@@ -233,6 +247,10 @@ const drawMap = () => {
   // Remove old slider when updating to new data
   d3.select("#slider").remove()
 
+  // If width of map is less than 650 limit tick values on slider
+  sliderTicks = wMap < 650 ?  yearRange : null
+  slider.tickValues(sliderTicks)
+
   // Add slider for year
   svgMap.append('g')
         .attr("id", "slider")
@@ -300,6 +318,9 @@ const addclimateDataPref = () => {
     }
   )
 }
+
+// On initial load, add svg, run addClimtateData fuction (which adds data and draws graph)
+addSvgMap()
 
 // Import data - map data is converted from topojson format; climate data imported after map data loaded
 d3.json(japanMapDataUrl).then(

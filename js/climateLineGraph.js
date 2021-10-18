@@ -3,8 +3,6 @@ const marginClimateLeft = 80
 
 var yearRangeClimate = [1975,2019]
 
-console.log(width, height)
-
 // Set title for map based on selected data
 var climateTitle
 const climateTitles = [
@@ -21,6 +19,15 @@ const updateClimateTitle = () => {
   d3.select("#climate-title").text(`${climateTitle}`)
 }
 
+// Append svg for line graph - function so it can be called after removing svg for resizing/updating
+const addClimateSvg = () => {
+  svgClimate = d3.select("#climate-line-graph-plot")
+                        .append("svg")
+                          .attr("id", "svg-climate")
+                          .attr("width", width)
+                          .attr("height", height)
+}
+
 // Function to change data source and fetch new data.
 const changeDataClimate = () => {
   let indicatorIndexClimate = document.getElementById("select-data-climate").selectedIndex
@@ -29,20 +36,19 @@ const changeDataClimate = () => {
   // d3.selectAll(".axis").remove()
   d3.select("#svg-climate").remove()
   climateDataNat = []
+  addClimateSvg()
   addClimateData()
   updateClimateTitle()
 }
 
+// Redraw function - include re-appending plot svg
+const reDrawClimate = () => {
+  addClimateSvg()
+  drawLineGraph()
+}
+
 // --- Draw line graph ---
-
 const drawLineGraph = () => {
-
-  // Append svg for line graph
-  const svgClimate = d3.select("#climate-line-graph-plot")
-                        .append("svg")
-                          .attr("id", "svg-climate")
-                          .attr("width", width)
-                          .attr("height", height)
 
   // Set scales
   const xScaleClimate = d3.scaleLinear()
@@ -160,4 +166,6 @@ const addClimateData = () => {
   )
 }
 
+// On initial load, add svg, run addClimtateData fuction (which adds data and draws graph)
+addClimateSvg()
 addClimateData()

@@ -1,15 +1,7 @@
-const wClimate = 600
-const hClimate = 380
 const marginClimate = 40
+const marginClimateLeft = 80
 
 var yearRangeClimate = [1975,2019]
-
-// Append svg for line graph
-const svgClimate = d3.select("#climate-line-graph-plot")
-                      .append("svg")
-                        .attr("id", "svg-climate")
-                        .attr("width", wClimate)
-                        .attr("height", hClimate)
 
 // Set title for map based on selected data
 var climateTitle
@@ -27,30 +19,44 @@ const updateClimateTitle = () => {
   d3.select("#climate-title").text(`${climateTitle}`)
 }
 
+// Append svg for line graph - function so it can be called after removing svg for resizing/updating
+const addClimateSvg = () => {
+  svgClimate = d3.select("#climate-line-graph-plot")
+                        .append("svg")
+                          .attr("id", "svg-climate")
+                          .attr("width", width)
+                          .attr("height", height)
+}
+
 // Function to change data source and fetch new data.
 const changeDataClimate = () => {
   let indicatorIndexClimate = document.getElementById("select-data-climate").selectedIndex
   indicatorIdClimate = indicatorIdArrClimate[indicatorIndexClimate]
-  d3.selectAll(".line").remove()
-  d3.selectAll(".axis").remove()
+  d3.select("#svg-climate").remove()
   climateDataNat = []
+  addClimateSvg()
   addClimateData()
   updateClimateTitle()
 }
 
-// --- Draw line graph ---
+// Redraw function - include re-appending plot svg
+const reDrawClimate = () => {
+  addClimateSvg()
+  drawLineGraph()
+}
 
+// --- Draw line graph ---
 const drawLineGraph = () => {
 
   // Set scales
   const xScaleClimate = d3.scaleLinear()
                           .domain(d3.extent(climateDataNat, d => d.year))
-                          .range([marginClimate, wClimate - marginClimate])
+                          .range([marginClimateLeft, width - marginClimate])
 
   const yScaleClimate = d3.scaleLinear()
                           .domain(d3.extent(climateDataNat, d => d.average))
                           .nice()
-                          .range([hClimate - marginClimate, marginClimate])
+                          .range([height - marginClimate, marginClimate])
 
   // Set axes
   const xAxisClimate = d3.axisBottom()
@@ -75,14 +81,17 @@ const drawLineGraph = () => {
   // Create x-axis
   svgClimate.append("g")
             .attr("class", "axis")
-            .attr("transform", `translate(0, ${hClimate - marginClimate})`)
+            .attr("transform", `translate(0, ${height - marginClimate})`)
             .call(xAxisClimate);
 
   // Create y-axis
   svgClimate.append("g")
             .attr("class", "axis")
-            .attr("transform", `translate(${marginClimate}, 0)`)
+            .attr("transform", `translate(${marginClimateLeft}, 0)`)
             .call(yAxisClimate)
+
+  // div is initially hidden, visble after svg created to prevent "pop-in"
+  d3.select("#climate-line-graph").style("visibility", "visible")
 }
 
 // --- Fetch Data ---
@@ -105,6 +114,9 @@ var climateDataNat = []
 
 // Fetch climate data (prefectural) function
 const addClimateData = () => {
+  // Show loading animation
+  d3.select(".line-loading").style("visibility", "visible")
+  // Create Url
   dataUrl = `${dataBaseUrlClimate}&IndicatorCode=${indicatorIdClimate}`
   d3.json(dataUrl).then(
     (data, error) => {
@@ -144,10 +156,14 @@ const addClimateData = () => {
         })
         yearRangeClimate = d3.extent(climateDataNat, d => d.year)
         // Once data has been obtained
+        // Hide loading animation
+        d3.select(".line-loading").style("visibility", "hidden")
         drawLineGraph()
       }
     }
   )
 }
 
+// On initial load, add svg, run addClimtateData function (which adds data and draws graph)
+addClimateSvg()
 addClimateData()

@@ -1,9 +1,3 @@
-const w = 800
-const h = 600
-const w2 = w / 3
-const h2 = h / 2
-const legendAxisHeight = h/3
-
 var dataUrl
 const japanMapDataUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/japan/jp-prefectures.json"
 const dataBaseUrl = "https://dashboard.e-stat.go.jp/api/1.0/Json/getData?"
@@ -33,6 +27,17 @@ var playing = false
 const indicatorIdArr = ["0102010000000010010", "0102010000000010020", "0102010000000010030", "0102020300000010010"]
 var indicatorId = indicatorIdArr[0]
 
+// Append svg for line graph - function so it can be called after removing svg for resizing/updating
+const addSvgMap = () => {
+  svgMap = d3.select("#map")
+                    .append("svg")
+                      .attr("id", "map-canvas")
+                      .attr("width", wMap)
+                      .attr("height", hMap)
+                      .style("stroke", "white")
+                      .attr("style", "outline: thin solid black;")
+}
+
 // Set title for map based on selected data
 var mapTitle
 const mapTitles = [
@@ -54,24 +59,13 @@ const changeDataMap = () => {
   slider.value([currentYear])
   let indicatorIndex = document.getElementById("select-data-map").selectedIndex
   indicatorId = indicatorIdArr[indicatorIndex]
+  d3.select("#map-canvas").remove()
+  d3.select("#map-canvas-inset").remove()
+  addSvgMap()
   addclimateDataPref()
   updateMap()
   updateMapTitle()
 }
-
-// Slider for year
-var slider = d3.sliderHorizontal()
-                .value([yearRange[1]])
-                .min(yearRange[0])
-                .max(yearRange[1])
-                .step(1)
-                .width(w / 3)
-                .displayValue(false)
-                .tickFormat(d3.format("d"))
-                .on('onchange', (val) => {
-                  currentYear = val
-                  updateMap()
-                })
 
 // Update map and text based on currentYear value
 const updateMap = () => {
@@ -91,10 +85,33 @@ const updateMap = () => {
   })
 }
 
-// Animate map data by iterating through years
+// Redraw function after resizing - include re-appending plot svg
+const reDrawMap = () => {
+  addSvgMap()
+  drawMap()
+  animateMap()
+}
+
+let sliderTicks = null
+// Slider for year
+let slider = d3.sliderHorizontal()
+                .value([yearRange[1]])
+                .min(yearRange[0])
+                .max(yearRange[1])
+                .step(1)
+                .displayValue(false)
+                .tickValues(sliderTicks)
+                .tickFormat(d3.format("d"))
+                .on('onchange', (val) => {
+                  currentYear = val
+                  updateMap()
+                })
+
+// Add animate map data function - iterates through years
 const animateMap = () => {
   d3.select("#play-btn")
     .on("click", function() {
+      console.log("clicked")
       if(playing == false) {
         timer = setInterval( function() {
           if(currentYear < yearRange[1]) { currentYear ++}
@@ -117,44 +134,45 @@ const resetTimer = () => {
   playing = false
 }
 
-// svg for prefectural map of data
-const svgMap = d3.select("#map")
-                  .append("svg")
-                  .attr("id", "map-canvas")
-                  .attr("width", w)
-                  .attr("height", h)
-                  .style("stroke", "white")
-                  .attr("style", "outline: thin solid black;")
+// --- DRAW MAP function (to be called once data fetched from API) ---
+const drawMap = () => {
 
-// svg for inset map of Okinawa region
-const svgMapInset = d3.select("#map")
-                          .append("svg")
+  let wMap2 = wMap / 3
+  let hMap2 = hMap / 2
+  let legendAxisHeight = hMap / 3
+
+  // Set slider width
+  slider.width(wMap / 3)
+
+  // svg for inset map of Okinawa region
+  const svgMapInset = d3.select("#map")
+                        .append("svg")
                           .attr("id", "map-canvas-inset")
-                          .attr("width", w2)
-                          .attr("height", h2)
-                          .style("stroke", "white")
+                          .attr("width", wMap2)
+                          .attr("height", hMap2)
+                          .style("stroke", "whMapite")
                           .attr("style", "outline: thin solid black;")
 
-// Set projection, main map and inset map
-const projection = d3.geoMercator()
-                      .center([137.5,36])
-                      .scale(2.9 * h)
-                      .translate([w / 2, h / 1.5]);
+  // Set projection, main map and inset map
+  const projection = d3.geoMercator()
+                        .center([137.5,36])
+                        .scale(2.9 * hMap)
+                        .translate([wMap / 2, hMap / 1.5]);
 
-const projectionInset = d3.geoMercator()
-                      .center([127.9,26.5])
-                      .scale(6 * h)
-                      .translate([w2 / 2, h2 / 2]);
+  const projectionInset = d3.geoMercator()
+                        .center([127.9,26.5])
+                        .scale(6 * hMap)
+                        .translate([wMap2 / 2, hMap2 / 2]);
 
-// set path generator, main map and inset map
-const geoGenerator = d3.geoPath()
-                        .projection(projection)
+  // set path generator, main map and inset map
+  const geoGenerator = d3.geoPath()
+                          .projection(projection)
 
-const geoGeneratorInset = d3.geoPath()
-                            .projection(projectionInset)
+  const geoGeneratorInset = d3.geoPath()
+                              .projection(projectionInset)
 
-// Draw map function (to be called once data fetched from API)
-const drawMap = () => {
+
+  // Update indicated year
   d3.select("#year").text(currentYear)
 
   // Get date range (years) of data
@@ -215,7 +233,7 @@ const drawMap = () => {
   // Add legend-axis
   svgMap.append("g")
         .attr("id", "legend")
-        .attr("transform", `translate(${0.9 * w}, ${0.1 * h})`)
+        .attr("transform", `translate(${0.9 * wMap}, ${0.1 * hMap})`)
         .call(legendAxis)
         .selectAll("rect")
           .data(colors)
@@ -231,24 +249,28 @@ const drawMap = () => {
   // Remove old slider when updating to new data
   d3.select("#slider").remove()
 
+  // If width of map is less than 650 limit tick values on slider
+  sliderTicks = wMap < 650 ?  yearRange : null
+  slider.tickValues(sliderTicks)
+
   // Add slider for year
   svgMap.append('g')
         .attr("id", "slider")
-        .attr('transform', () => `translate(${(2 * w / 3) - 40}, ${h - 50})`)
+        .attr('transform', () => `translate(${(2 * wMap / 3) - 40}, ${hMap - 50})`)
         .call(slider)
         .append("text")
           .attr("pointer-events", "none")
           .attr("id", "year")
           .text(currentYear)
           .attr("text-anchor", "middle")
-          .attr("transform", () => `translate(${(w / 6)}, -20)`)
+          .attr("transform", () => `translate(${(wMap / 6)}, -20)`)
 
 
   // Add "button" (rect element) to slider for play/stop functionality
   svgMap.select("#slider")
         .append("g")
         .attr("id", "btn-marker")
-        .attr("transform", () => `translate(${w/3 -20}, -25)`)
+        .attr("transform", () => `translate(${wMap/3 -20}, -25)`)
 
   // Add "button" (rect element) to slider for play/stop functionality & Add text to button
   let btnMarker = d3.select("#btn-marker")
@@ -258,12 +280,16 @@ const drawMap = () => {
             .attr("width",  40)
             .attr("height", 30)
             .attr("transform", "translate(-20, -15)")
+            .attr("rx", "5")
 
   btnMarker.append("text")
             .attr("id", "play-btn-text")
             .attr("text-anchor", "middle")
             .attr("transform", "translate(0, 5)")
             .text("Play")
+
+  // div is initially hidden, visble after svg created to prevent "pop-in"
+  d3.select("#choropleth").style("visibility", "visible")
 }
 
 // Fetch climate data (prefectural) function
@@ -274,6 +300,8 @@ const addclimateDataPref = () => {
       if(error) {
         console.log(error)
       } else {
+        // Hide loading animation
+        d3.select(".map-loading").style("visibility", "hidden")
         let dataAll =data.GET_STATS.STATISTICAL_DATA.DATA_INF.DATA_OBJ
         climateDataPref = dataAll.map(item => {
           return {
@@ -294,9 +322,14 @@ const addclimateDataPref = () => {
   )
 }
 
+// On initial load - add svg; fetch and convert map data; run addClimtateData fuction (which adds data and draws map)
+addSvgMap()
+
 // Import data - map data is converted from topojson format; climate data imported after map data loaded
 d3.json(japanMapDataUrl).then(
   (data, error) => {
+    // Show loading animation
+    d3.select(".map-loading").style("visibility", "visible")
     if(error) {
       console.log(error)
     } else {

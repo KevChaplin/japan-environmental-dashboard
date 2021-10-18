@@ -14,55 +14,61 @@
 </head>
 
 <body>
-
   <div id="page-title">
     <h1 id="title">Japan Environmental Dashboard</h2>
     <h3 id="description">Recent trends in climate related data</h3>
   </div>
-
-  <div id="climate-line-graph">
-    <h3 id="climate-title">Average temperature</br>- Nationwide (°C)</h3>
-    <div>
-      <label for="select-data-climate">Choose data:</label>
-      <select id="select-data-climate" onchange="changeDataClimate()">
-        <option>Average temperature</option>
-        <option>Highest monthly average - high temps</option>
-        <option>Lowest monthly average - low temps</option>
-        <option>Yearly precipitation</option>
-      </select>
+  <div id="grid-container">
+    <div id="climate-line-graph" class="grid-item" >
+      <div class="lds-dual-ring line-loading"></div>
+      <h3 id="climate-title">Average temperature</br>- Nationwide (°C)</h3>
+      <div>
+        <label for="select-data-climate">Choose data:</label>
+        <select id="select-data-climate" onchange="changeDataClimate()">
+          <option>Average temperature</option>
+          <option>Highest monthly average - high temps</option>
+          <option>Lowest monthly average - low temps</option>
+          <option>Yearly precipitation</option>
+        </select>
+      </div>
+      <div id="climate-line-graph-plot">
+      </div>
     </div>
-    <div id="climate-line-graph-plot">
+
+    <div id="energy-bar-graph" class="grid-item" >
+      <div class="lds-dual-ring bar-loading"></div>
+      <h3 id="energy-title">Energy Production by Source (million kWh)</h3>
+      <div id="energy-bar-graph-plot">
+      </div>
+    </div>
+
+    <div id="choropleth" class="grid-item">
+      <div class="lds-dual-ring map-loading"></div>
+      <h3 id="map-title">Average temperature (°C)</h3>
+      <div>
+        <label for="select-data-map">Choose data:</label>
+        <select id="select-data-map" onchange="changeDataMap()">
+          <option>Average temperature</option>
+          <option>Highest monthly average - high temps</option>
+          <option>Lowest monthly average - low temps</option>
+          <option>Yearly precipitation</option>
+        </select>
+      </div>
+      <div id="map">
+      </div>
+      <div id="notes">
+        <p>* This service uses the API feature of Statistics Dashboard, but the contents of this service are not guaranteed by the Statistics Bureau of Japan</p>
+      </div>
     </div>
   </div>
-
-  <div id="energy-bar-graph">
-    <h3 id="energy-title">Energy Production by Source (million kWh)</h3>
-    <div id="energy-bar-graph-plot">
-    </div>
-  </div>
-
-  <div id="choropleth">
-    <h3 id="map-title">Average temperature (°C)</h3>
-    <div>
-      <label for="select-data-map">Choose data:</label>
-      <select id="select-data-map" onchange="changeDataMap()">
-        <option>Average temperature</option>
-        <option>Highest monthly average - high temps</option>
-        <option>Lowest monthly average - low temps</option>
-        <option>Yearly precipitation</option>
-      </select>
-    </div>
-    <div id="map">
-    </div>
-    <p>* This service uses the API feature of Statistics Dashboard, but the contents of this service are not guaranteed by the Statistics Bureau of Japan</p>
-  </div>
-
 </body>
 
+<script src="js/setDimensions.js"></script>
 <script src="data/prefectures.js"></script>
 <script src="js/choropleth.js"></script>
 <script src="js/climateLineGraph.js"></script>
 <script src="js/energyBarGraph.js"></script>
+<script src="js/responsive.js"></script>
 <script type="module">
   import {interpolateYlGn} from "https://cdn.skypack.dev/d3-scale-chromatic@3";
   const yellow = interpolateYlGn(0); // "rgb(255, 255, 229)"

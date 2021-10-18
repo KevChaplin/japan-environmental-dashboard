@@ -89,6 +89,7 @@ const updateMap = () => {
 const reDrawMap = () => {
   addSvgMap()
   drawMap()
+  animateMap()
 }
 
 let sliderTicks = null
@@ -106,10 +107,11 @@ let slider = d3.sliderHorizontal()
                   updateMap()
                 })
 
-// Animate map data by iterating through years
+// Add animate map data function - iterates through years
 const animateMap = () => {
   d3.select("#play-btn")
     .on("click", function() {
+      console.log("clicked")
       if(playing == false) {
         timer = setInterval( function() {
           if(currentYear < yearRange[1]) { currentYear ++}
@@ -319,7 +321,7 @@ const addclimateDataPref = () => {
   )
 }
 
-// On initial load, add svg, run addClimtateData fuction (which adds data and draws graph)
+// On initial load - add svg; fetch and convert map data; run addClimtateData fuction (which adds data and draws map)
 addSvgMap()
 
 // Import data - map data is converted from topojson format; climate data imported after map data loaded

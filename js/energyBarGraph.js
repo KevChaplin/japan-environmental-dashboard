@@ -182,6 +182,6 @@ const addEnergyData = () => {
       })
 }
 
-// On initial load, add svg, run addClimtateData fuction (which adds data and draws graph)
+// On initial load, add svg, run addEnergyData function (which adds data and draws graph)
 addEnergySvg()
 addEnergyData()

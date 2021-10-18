@@ -32,8 +32,6 @@ const addClimateSvg = () => {
 const changeDataClimate = () => {
   let indicatorIndexClimate = document.getElementById("select-data-climate").selectedIndex
   indicatorIdClimate = indicatorIdArrClimate[indicatorIndexClimate]
-  // d3.selectAll(".line").remove()
-  // d3.selectAll(".axis").remove()
   d3.select("#svg-climate").remove()
   climateDataNat = []
   addClimateSvg()
@@ -166,6 +164,6 @@ const addClimateData = () => {
   )
 }
 
-// On initial load, add svg, run addClimtateData fuction (which adds data and draws graph)
+// On initial load, add svg, run addClimtateData function (which adds data and draws graph)
 addClimateSvg()
 addClimateData()
